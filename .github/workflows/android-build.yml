@@ -28,18 +28,24 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Setup Android SDK Build-Tools
-        uses: android-actions/setup-android@v3
-
-      - name: Install Apktool & Dependencies
+      - name: Setup Android SDK Build-Tools & Apktool
         run: |
-          sudo apt-get update
-          sudo apt-get install -y zipalign apksigner aapt
-          wget -q https://raw.githubusercontent.com/iBotPeaches/Apktool/master/scripts/linux/apktool -O apktool
-          wget -q https://bitbucket.org/iBotPeaches/apktool/downloads/apktool_2.9.3.jar -O apktool.jar
-          chmod +x apktool
-          sudo mv apktool /usr/local/bin/
-          sudo mv apktool.jar /usr/local/bin/
+          # Add latest pre-installed Android build-tools to PATH
+          BUILD_TOOLS_DIR=$(ls -d $ANDROID_HOME/build-tools/* | sort -V | tail -n 1)
+          echo "Using Android Build Tools: $BUILD_TOOLS_DIR"
+          echo "$BUILD_TOOLS_DIR" >> $GITHUB_PATH
+
+          # Download and configure Apktool v2.10.0
+          sudo curl -sL "https://github.com/iBotPeaches/Apktool/releases/download/v2.10.0/apktool_2.10.0.jar" -o /usr/local/bin/apktool.jar
+          sudo chmod 644 /usr/local/bin/apktool.jar
+          
+          cat << 'EOF' | sudo tee /usr/local/bin/apktool > /dev/null
+#!/bin/bash
+exec java -jar /usr/local/bin/apktool.jar "$@"
+EOF
+          sudo chmod +x /usr/local/bin/apktool
+
+          echo "Apktool version:"
           apktool --version
 
       - name: Build Hamyra APK with AAPT2
