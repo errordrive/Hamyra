@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <base-config cleartextTrafficPermitted="true">
+        <trust-anchors>
+            <certificates src="system" />
+        </trust-anchors>
+    </base-config>
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="true">bhotasportzx.xyz</domain>
+        <domain includeSubdomains="true">epiwin.download</domain>
+        <domain includeSubdomains="true">72-60-110-89.nip.io</domain>
+    </domain-config>
+</network-security-config>

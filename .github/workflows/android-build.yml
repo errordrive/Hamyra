@@ -1,0 +1,129 @@
+name: Hamyra 2.1 - Android Cloud Build & Release
+
+on:
+  push:
+    branches: [ "main", "master" ]
+    tags: [ "v*" ]
+  pull_request:
+    branches: [ "main", "master" ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build & Package Hamyra APKs
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Setup Android SDK Build-Tools
+        uses: android-actions/setup-android@v3
+
+      - name: Install Apktool & Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y zipalign apksigner aapt
+          wget -q https://raw.githubusercontent.com/iBotPeaches/Apktool/master/scripts/linux/apktool -O apktool
+          wget -q https://bitbucket.org/iBotPeaches/apktool/downloads/apktool_2.9.3.jar -O apktool.jar
+          chmod +x apktool
+          sudo mv apktool /usr/local/bin/
+          sudo mv apktool.jar /usr/local/bin/
+          apktool --version
+
+      - name: Build Hamyra APK with AAPT2
+        run: |
+          mkdir -p build/unsigned
+          mkdir -p artifacts
+          
+          # Build APK using aapt2
+          apktool b --use-aapt2 apktool_project -o build/unsigned/Hamyra-2.1-unsigned.apk
+          
+          # Align APK
+          zipalign -v -p 4 build/unsigned/Hamyra-2.1-unsigned.apk artifacts/Hamyra-v2.1-release.apk
+
+      - name: Generate Keystore & Sign Release APK
+        run: |
+          # Create release/debug keystore
+          keytool -genkeypair -v \
+            -keystore hamyra.keystore \
+            -alias hamyra \
+            -keyalg RSA \
+            -keysize 2048 \
+            -validity 10000 \
+            -storepass hamyra123456 \
+            -keypass hamyra123456 \
+            -dname "CN=Hamyra, OU=Android, O=HamyraApp, L=Dhaka, ST=Dhaka, C=BD"
+
+          # Sign release APK with v1, v2, v3 schemes
+          apksigner sign \
+            --ks hamyra.keystore \
+            --ks-key-alias hamyra \
+            --ks-pass pass:hamyra123456 \
+            --key-pass pass:hamyra123456 \
+            --out artifacts/Hamyra-v2.1-signed.apk \
+            artifacts/Hamyra-v2.1-release.apk
+
+          # Copy debug variant
+          cp artifacts/Hamyra-v2.1-signed.apk artifacts/Hamyra-v2.1-debug.apk
+
+          # Verify signatures
+          apksigner verify --verbose artifacts/Hamyra-v2.1-signed.apk
+
+      - name: Generate Checksums
+        run: |
+          cd artifacts
+          sha256sum Hamyra-v2.1-signed.apk > checksums.txt
+          sha256sum Hamyra-v2.1-release.apk >> checksums.txt
+          cat checksums.txt
+
+      - name: Upload Signed APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Hamyra-v2.1-signed-apk
+          path: artifacts/Hamyra-v2.1-signed.apk
+          retention-days: 30
+
+      - name: Upload Release APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Hamyra-v2.1-release-apk
+          path: artifacts/Hamyra-v2.1-release.apk
+          retention-days: 30
+
+      - name: Upload Checksums Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: checksums
+          path: artifacts/checksums.txt
+          retention-days: 30
+
+      - name: Publish GitHub Release
+        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v2.1
+          name: "Hamyra v2.1 Release"
+          body: |
+            ### Hamyra 2.1 Release Build
+            - **Live Primary Worker:** `https://hamyra-api.hamyra.workers.dev`
+            - **Live Stream Proxy:** `https://streambd-proxy.hamyra.workers.dev`
+            - **New Features:** LibVLC media player, DownloadService offline downloader, 4K HD Hub, BnSubApi, and Hindi Dub Anime rail.
+          files: |
+            artifacts/Hamyra-v2.1-signed.apk
+            artifacts/Hamyra-v2.1-release.apk
+            artifacts/checksums.txt
+          draft: false
+          prerelease: false
+          generate_release_notes: true

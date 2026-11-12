@@ -1,0 +1,6 @@
+*.tmp
+*.log
+.gradle/
+build/
+*.keystore
+!hamyra.keystore

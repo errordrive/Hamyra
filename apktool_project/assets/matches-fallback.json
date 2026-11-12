@@ -1,0 +1,6 @@
+{
+  "version": 6,
+  "updatedAt": "2026-06-22T12:30:00Z",
+  "_doc": "Empty fallback. Matches are now fetched live from streamed.pk + TheSportsDB on every app launch / refresh. Per-match server URLs are resolved dynamically when the user taps a match (streamed.pk/api/stream/{source}/{id}). Nothing is hardcoded.",
+  "matches": []
+}

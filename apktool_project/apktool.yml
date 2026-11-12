@@ -1,0 +1,74 @@
+!!brut.androlib.meta.MetaInfo
+apkFileName: Hamyra-2.1.apk
+compressionType: false
+doNotCompress:
+- resources.arsc
+- assets/dexopt/baseline.prof
+- assets/dexopt/baseline.profm
+- assets/lib/arm64-v8a/libabcd.so
+- assets/lib/arm64-v8a/libdatastore_shared_counter.so
+- assets/lib/arm64-v8a/libnative-lib.so
+- assets/lib/arm64-v8a/libtoolChecker.so
+- assets/lib/armeabi-v7a/libabcd.so
+- assets/lib/armeabi-v7a/libdatastore_shared_counter.so
+- assets/lib/armeabi-v7a/libnative-lib.so
+- assets/lib/armeabi-v7a/libtoolChecker.so
+- assets/lib/x86/libabcd.so
+- assets/lib/x86/libdatastore_shared_counter.so
+- assets/lib/x86/libnative-lib.so
+- assets/lib/x86/libtoolChecker.so
+- assets/lib/x86_64/libabcd.so
+- assets/lib/x86_64/libdatastore_shared_counter.so
+- assets/lib/x86_64/libnative-lib.so
+- assets/lib/x86_64/libtoolChecker.so
+- lib/arm64-v8a/libandroidx.graphics.path.so
+- lib/arm64-v8a/libc++_shared.so
+- lib/arm64-v8a/libdatastore_shared_counter.so
+- lib/arm64-v8a/libffmpegJNI.so
+- lib/arm64-v8a/libnative-lib.so
+- lib/arm64-v8a/libvlc.so
+- lib/arm64-v8a/libvlcjni.so
+- webp
+- png
+- jpg
+isFrameworkApk: false
+packageInfo:
+  forcedPackageId: '127'
+  renameManifestPackage: null
+sdkInfo:
+  minSdkVersion: '24'
+  targetSdkVersion: '36'
+sharedLibrary: false
+sparseResources: false
+unknownFiles:
+  DebugProbesKt.bin: '8'
+  firebase-auth-interop.properties: '8'
+  play-services-base.properties: '8'
+  play-services-basement.properties: '8'
+  play-services-tasks.properties: '8'
+  core/java_features_proto-descriptor-set.proto.bin: '8'
+  google/protobuf/any.proto: '8'
+  google/protobuf/api.proto: '8'
+  google/protobuf/descriptor.proto: '8'
+  google/protobuf/duration.proto: '8'
+  google/protobuf/empty.proto: '8'
+  google/protobuf/field_mask.proto: '8'
+  google/protobuf/source_context.proto: '8'
+  google/protobuf/struct.proto: '8'
+  google/protobuf/timestamp.proto: '8'
+  google/protobuf/type.proto: '8'
+  google/protobuf/wrappers.proto: '8'
+  okhttp3/internal/publicsuffix/NOTICE: '8'
+  okhttp3/internal/publicsuffix/publicsuffixes.gz: '8'
+  org/mozilla/javascript/resources/Messages.properties: '8'
+  org/mozilla/javascript/resources/Messages_en.properties: '8'
+  org/mozilla/javascript/resources/Messages_fr.properties: '8'
+  org/mozilla/javascript/resources/Messages_zh_CN.properties: '8'
+usesFramework:
+  ids:
+  - 1
+  tag: null
+version: 2.7.0-dirty
+versionInfo:
+  versionCode: '14'
+  versionName: '2.1'

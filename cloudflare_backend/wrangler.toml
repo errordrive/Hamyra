@@ -1,0 +1,14 @@
+name = "hamyra-api"
+main = "src/index.js"
+compatibility_date = "2024-11-01"
+
+[vars]
+HMAC_SECRET = "streambd_K9mR2pL8nT5qY3wJ7cS4uE6oA0bF"
+TMDB_API_KEY = "0b3d17a4fe3dd52593a48d9a0dad4bd6"
+GEMINI_API_KEYS = "AIzaSyA8eiZmM1FaDVjRy-df2KTyQ_vz_yYM39w,AIzaSyCzCx_T_y3dz-teDIEas1he6nfW4EwRj5s,AIzaSyCv82eHAx0LaNvcJqOwumExKJen0_CzT1M"
+PROXY_BASE_URL = "https://streambd-proxy.aininjaibrahim.workers.dev"
+
+# Optional: You can attach a KV namespace to dynamically edit channels without redeploying:
+# [[kv_namespaces]]
+# binding = "HAMYRA_KV"
+# id = "your-kv-namespace-id"
