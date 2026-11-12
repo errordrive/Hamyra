@@ -38,11 +38,7 @@ jobs:
           # Download and configure Apktool v2.10.0
           sudo curl -sL "https://github.com/iBotPeaches/Apktool/releases/download/v2.10.0/apktool_2.10.0.jar" -o /usr/local/bin/apktool.jar
           sudo chmod 644 /usr/local/bin/apktool.jar
-          
-          cat << 'EOF' | sudo tee /usr/local/bin/apktool > /dev/null
-#!/bin/bash
-exec java -jar /usr/local/bin/apktool.jar "$@"
-EOF
+          printf '#!/bin/bash\nexec java -jar /usr/local/bin/apktool.jar "$@"\n' | sudo tee /usr/local/bin/apktool > /dev/null
           sudo chmod +x /usr/local/bin/apktool
 
           echo "Apktool version:"
