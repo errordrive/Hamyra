@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="androidx_startup">androidx.startup</string>
-    <string name="app_name">Hamyra</string>
+    <string name="app_name">StreamFlix</string>
     <string name="build_libvlc_revision">c0cc8ce</string>
     <string name="build_vlc_revision">8c96b44e6d</string>
     <string name="call_notification_answer_action">Answer</string>

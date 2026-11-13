@@ -1,4 +1,4 @@
-name: Hamyra 2.1 - Android Cloud Build & Release
+name: StreamFlix 2.1 - Android Cloud Build & Release
 
 on:
   push:
@@ -13,7 +13,7 @@ permissions:
 
 jobs:
   build:
-    name: Build & Package Hamyra APKs
+    name: Build & Package StreamFlix APK
     runs-on: ubuntu-latest
 
     steps:
@@ -44,64 +44,59 @@ jobs:
           echo "Apktool version:"
           apktool --version
 
-      - name: Build Hamyra APK with AAPT2
+      - name: Build StreamFlix APK with AAPT2
         run: |
           mkdir -p build/unsigned
+          mkdir -p build/aligned
           mkdir -p artifacts
           
           # Build APK using aapt2
-          apktool b --use-aapt2 apktool_project -o build/unsigned/Hamyra-2.1-unsigned.apk
+          apktool b --use-aapt2 apktool_project -o build/unsigned/StreamFlix-2.1-unsigned.apk
           
           # Align APK
-          zipalign -v -p 4 build/unsigned/Hamyra-2.1-unsigned.apk artifacts/Hamyra-v2.1-release.apk
+          zipalign -v -p 4 build/unsigned/StreamFlix-2.1-unsigned.apk build/aligned/StreamFlix-2.1-aligned.apk
 
       - name: Generate Keystore & Sign Release APK
         run: |
-          # Create release/debug keystore
+          # Create release keystore
           keytool -genkeypair -v \
-            -keystore hamyra.keystore \
-            -alias hamyra \
+            -keystore streamflix.keystore \
+            -alias streamflix \
             -keyalg RSA \
             -keysize 2048 \
             -validity 10000 \
-            -storepass hamyra123456 \
-            -keypass hamyra123456 \
-            -dname "CN=Hamyra, OU=Android, O=HamyraApp, L=Dhaka, ST=Dhaka, C=BD"
+            -storepass streamflix123 \
+            -keypass streamflix123 \
+            -dname "CN=StreamFlix, OU=Mobile, O=StreamFlixApp, L=Dhaka, ST=Dhaka, C=BD"
 
-          # Sign release APK with v1, v2, v3 schemes
+          # Sign release APK with explicit v1, v2, v3 schemes for 100% Android device compatibility
           apksigner sign \
-            --ks hamyra.keystore \
-            --ks-key-alias hamyra \
-            --ks-pass pass:hamyra123456 \
-            --key-pass pass:hamyra123456 \
-            --out artifacts/Hamyra-v2.1-signed.apk \
-            artifacts/Hamyra-v2.1-release.apk
+            --ks streamflix.keystore \
+            --ks-key-alias streamflix \
+            --ks-pass pass:streamflix123 \
+            --key-pass pass:streamflix123 \
+            --v1-signing-enabled true \
+            --v2-signing-enabled true \
+            --v3-signing-enabled true \
+            --min-sdk-version 21 \
+            --out artifacts/StreamFlix-v2.1.apk \
+            build/aligned/StreamFlix-2.1-aligned.apk
 
-          # Copy debug variant
-          cp artifacts/Hamyra-v2.1-signed.apk artifacts/Hamyra-v2.1-debug.apk
-
-          # Verify signatures
-          apksigner verify --verbose artifacts/Hamyra-v2.1-signed.apk
+          # Verify signatures across all SDK levels
+          echo "=== APK Signature Verification (SDK 21+) ==="
+          apksigner verify --verbose --min-sdk-version 21 artifacts/StreamFlix-v2.1.apk
 
       - name: Generate Checksums
         run: |
           cd artifacts
-          sha256sum Hamyra-v2.1-signed.apk > checksums.txt
-          sha256sum Hamyra-v2.1-release.apk >> checksums.txt
+          sha256sum StreamFlix-v2.1.apk > checksums.txt
           cat checksums.txt
 
-      - name: Upload Signed APK Artifact
+      - name: Upload StreamFlix APK Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Hamyra-v2.1-signed-apk
-          path: artifacts/Hamyra-v2.1-signed.apk
-          retention-days: 30
-
-      - name: Upload Release APK Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: Hamyra-v2.1-release-apk
-          path: artifacts/Hamyra-v2.1-release.apk
+          name: StreamFlix-v2.1-apk
+          path: artifacts/StreamFlix-v2.1.apk
           retention-days: 30
 
       - name: Upload Checksums Artifact
@@ -116,15 +111,16 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v2.1
-          name: "Hamyra v2.1 Release"
+          name: "StreamFlix v2.1 Release"
           body: |
-            ### Hamyra 2.1 Release Build
+            ### StreamFlix 2.1 Release Build
+            - **Renamed:** Updated app name to **StreamFlix**
+            - **Compatibility & Parse Fix:** Min SDK 21, Target SDK 34, native lib extraction enabled, dual v1+v2+v3 signature scheme
             - **Live Primary Worker:** `https://hamyra-api.hamyra.workers.dev`
             - **Live Stream Proxy:** `https://streambd-proxy.hamyra.workers.dev`
             - **New Features:** LibVLC media player, DownloadService offline downloader, 4K HD Hub, BnSubApi, and Hindi Dub Anime rail.
           files: |
-            artifacts/Hamyra-v2.1-signed.apk
-            artifacts/Hamyra-v2.1-release.apk
+            artifacts/StreamFlix-v2.1.apk
             artifacts/checksums.txt
           draft: false
           prerelease: false
